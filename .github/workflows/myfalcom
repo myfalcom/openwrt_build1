@@ -1,0 +1,43 @@
+name: Build ImmortalWrt
+
+on:
+  workflow_dispatch:   # 手动触发
+  push:                # 或者 push 时触发
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@v4
+
+      - name: Init build environment
+        run: |
+          chmod +x ./diy-init.sh
+          ./init.sh
+
+      - name: Clone ImmortalWrt
+        run: |
+          git clone https://github.com/immortalwrt/immortalwrt
+          cd immortalwrt
+          echo "src-git kenzo https://github.com/kenzok8/openwrt-packages" >> feeds.conf.default
+          echo "src-git small https://github.com/kenzok8/small" >> feeds.conf.default
+
+      - name: Update and install feeds
+        working-directory: immortalwrt
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Copy .config
+        run: |
+          cp .config immortalwrt/.config
+
+      - name: Build firmware
+        working-directory: immortalwrt
+        run: |
+          make defconfig
+          make -j$(nproc) V=s
