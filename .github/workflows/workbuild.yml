@@ -17,7 +17,7 @@ jobs:
       - name: Init build environment
         run: |
           chmod +x ./diy-init.sh
-          ./init.sh
+          ./diy-init.sh
 
       - name: Clone ImmortalWrt
         run: |
