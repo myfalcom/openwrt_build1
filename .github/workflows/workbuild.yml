@@ -40,7 +40,4 @@ jobs:
         working-directory: immortalwrt
         run: |
           make defconfig
-          make -j$(nproc) V=s CONFIG_SHELL=/bin/bash \
-            BUILD_LOG=0 \
-            IGNORE_ERRORS=1 \
-            > build.log 2>&1
+          make -j$(nproc) V=s CONFIG_SHELL=/bin/bash
